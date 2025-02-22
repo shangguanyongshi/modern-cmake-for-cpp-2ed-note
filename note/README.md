@@ -52,14 +52,14 @@ CMake是一组工具，包含五个可执行文件：
      ```
 
 
-   生成构建系统时可以使用`CMAKE_BUILD_TYPE`变量指定构建的类型：
+   对于**单配置生成器**生成构建系统时可以使用`CMAKE_BUILD_TYPE`变量指定构建的类型：
    - 可选值包括`Debug`、`Release`、`MinSizeRel`或`RelWithDebInfo`
      ```bash
      cmake -S . -B ../build -D CMAKE_BUILD_TYPE=Release
      ```
      对于每次只能生成一种构建类型文件的单配置生成器，应该在配置阶段指定构建类型，并为每种配置类型生成一个单独的构建系统
 
-     多配置生成器一般在构建阶段配置构建类型
+   多配置生成器一般在构建阶段使用`CMAKE_CONFIGURATION_TYPES`配置构建类型
 
 
    在生成构建系统时，可以添加一个`-G generator_name`指定利用什么生成器生成项目，命令`cmake --help`的末尾会列出支持的生成器和默认生成器。
@@ -1212,13 +1212,13 @@ target_compile_features(target
 它有两种形式：
 
 - `#include <path_spec>`：优先到标准库目录中查找头文件
-- `#include "path_spec"`：优先在当前文件所在的目录中查找头文件，未找到时会到标准库目录中查找
+- `#include "path_spec"`：优先在当前源文件所在的目录中查找头文件，未找到时会到标准库目录中查找
 
 
 
-有两种方法为目标指定头文件：
+有三种方法为目标指定**额外**的（除当前目录和标准库目录外的其他路径）头文件搜索路径：
 
-1. 使用如下[命令](https://cmake.org/cmake/help/latest/command/target_include_directories.html "命令")，指定目标可以取哪些文件夹搜索需要的头文件（类似于编译时提供给`-I`）：
+1. 使用如下[命令](https://cmake.org/cmake/help/latest/command/target_include_directories.html "命令")，指定**目标**可以去哪些文件夹搜索需要的头文件（类似于编译时提供给`-I`）：
    ```cmake
    target_include_directories(target 
                               <INTERFACE|PUBLIC|PRIVATE>
@@ -1246,6 +1246,11 @@ target_compile_features(target
    # 为 calc 目标添加 include 中的头文件
 
    ```
+3. 使用`include_directories`[命令](https://cmake.org/cmake/help/latest/command/include_directories.html)，为所有目标添加头文件的搜索路径
+    - 更推荐使用`target_include_directories`明确为每个目标添加头文件搜索路径，这样可以更好地控制是否要将该路径导出给依赖项
+    ```CMake
+    include_directories([AFTER|BEFORE] [SYSTEM] dir1 [dir2 ...])
+    ```
 
 
 
