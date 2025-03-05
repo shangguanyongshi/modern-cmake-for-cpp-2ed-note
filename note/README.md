@@ -1144,7 +1144,6 @@ C++程序到可执行文件的过程为：
      ```bash
      g++ -c a.cpp b.cpp
      # 以上命令会生成 a.o 和 b.o 两个目标文件
-
      ```
 2. 将**所有目标文件链接**成单一的可执行文件
    - 使用链接器，适当地重定位目标文件位置，并解析对外部名字的引用
@@ -1153,7 +1152,6 @@ C++程序到可执行文件的过程为：
      ```bash
      g++ a.o b.o
      # 以上命令会生成 a.out 可执行文件
-
      ```
 
 
@@ -1223,7 +1221,6 @@ target_compile_features(target
    target_include_directories(target 
                               <INTERFACE|PUBLIC|PRIVATE>
                               [items1...])
-
    ```
    - 会根据传入的标志位，将路径保存到目标属性`INCLUDE_DIRECTORIES`或`INTERFACE_INCLUDE_DIRECTORIES`
 2. 使用`target_sources`的`FILE_SET`功能
@@ -1257,27 +1254,39 @@ target_compile_features(target
 
 ### 2. 定义预处理器
 
-使用如下[指令](https://cmake.org/cmake/help/latest/command/target_compile_definitions.html "指令")，在目标编译时传递预处理器（等价于`g++`编译时指定的`-D`）：
+有三种主要方法可以定义预处理器：
 
-```cmake
-target_compile_definitions(target
-                           <INTERFACE|PUBLIC|PRIVATE> [items1...])
-```
+1. 使用[`target_compile_definitions`](https://cmake.org/cmake/help/latest/command/target_compile_definitions.html)指令，在目标编译时传递预处理器（等价于`g++`编译时指定的`-D`）：
 
-- CMake会忽略`item`中的前导`-D`
+    ```CMake
+    target_compile_definitions(target
+                              <INTERFACE|PUBLIC|PRIVATE> [items1...])
+    ```
+    - CMake会忽略`item`中的前导`-D`
 
+    示例：
 
+    ```CMake
+    set(VAR 8)
+    # 等价于传递了两个预处理常量 ABC=1 和 DEF=8
+    target_compile_definitions(defined PRIVATE ABC "DEF=${VAR}")
+    ```
+2. 使用[`add_compile_definitions`](https://cmake.org/cmake/help/latest/command/add_compile_definitions.html)指令，对当前CMakeLists.txt及其子目录的**所有目标**添加预处理器（参数不需要包含前缀`-D`）
 
-示例：
+    ```CMake
+    add_compile_definitions(<definition> ...)
+    ```
 
-```cmake
-set(VAR 8)
-# 等价于传递了两个预处理常量 ABC=1 和 DEF=8
-target_compile_definitions(defined PRIVATE ABC "DEF=${VAR}")
+    示例：
 
+    ```CMake
+    add_compile_definitions(DEF=1) # 给所有目标添加了一个 -DDEF=1 编译选项
+    ```
+3. 使用[`add_definitions`](https://cmake.org/cmake/help/latest/command/add_definitions.html)指令，对当前CMakeLists.txt机器子目录的**所有目标**添加预处理器（参数需要包含`-D`前缀）。实际上，该指令是用来为所有目标添加编译器选项的，因此可以使用类型`-Wall`这样的参数添加其他的编译选项。官方文档中已经不再推荐使用该指令，应该优先使用上面两种。
 
-```
-
+    ```CMake
+    add_definitions(-DFOO -DBAR ...)
+    ```
 
 
 还可以使用处理文件的[configure\_file](https://cmake.org/cmake/help/latest/command/configure_file.html "configure_file")指令，生成包含预处理器定义的头文件，实现对预处理器的批量导入。此时使用`configure_file`指令的如下形式：
