@@ -1256,7 +1256,7 @@ target_compile_features(target
 
 有三种主要方法可以定义预处理器：
 
-1. 使用[`target_compile_definitions`](https://cmake.org/cmake/help/latest/command/target_compile_definitions.html)指令，在目标编译时传递预处理器（等价于`g++`编译时指定的`-D`）：
+1. 使用[`target_compile_definitions`](https://cmake.org/cmake/help/latest/command/target_compile_definitions.html)指令，为**指定目标**编译时传递预处理器（等价于`g++`编译时指定的`-D`）：
 
     ```CMake
     target_compile_definitions(target
