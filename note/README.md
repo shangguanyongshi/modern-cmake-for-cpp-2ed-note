@@ -2304,7 +2304,7 @@ install(TARGETS <targets>...
 CMake安装目标时，会将它们复制到特定目录中，如果指定了`DESTINATION`，会使用自定义目录。如果没有指定目录，CMake会根据目标类型，使用默认的目录路径。但是部分系统上，使用默认路径并不符合规范。有两种方法解决该问题：
 
 1. 自定义`CMAKE_INSTALL_<DIRTYPE>DIR`变量，为指定类型的目标指定保存的路径
-2. 使用`include<GNUInstallDirs>`模块，该模块中按照多数平台的规范，指定了多种类型目标的安装路径
+2. 使用`include(GNUInstallDirs)`模块，该模块中按照多数平台的规范，指定了多种类型目标的安装路径
 
 
 
@@ -3439,10 +3439,3 @@ cmake --workflow --list-presets
 
 
 通常，在预设文件中可以使用宏搭配条件，以针对特定环境禁用或启用某些预设。如，针对Windows定义的预设应该在Linux上禁用。
-
-
-
-
-
-
-
