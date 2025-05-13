@@ -381,6 +381,7 @@ CMake会复制执行`cmake`命令时的环境变量，可以使用`$ENV{env_var_
   ```cmake
   set(var_name value CACHE type desc_string)
   ```
+  - 如果缓存变量已经在`CMakeCache.txt`文件中存在（如已经通过`-D var=value`指定了），会忽略该`set()`命令，以避免覆盖已有的缓存变量
 
 
 
